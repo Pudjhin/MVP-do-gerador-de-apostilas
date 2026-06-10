@@ -48,7 +48,7 @@ class ConfigApostila:
     banca: str = ""
     disciplinas: list[str] = field(default_factory=list)
     nivel: str = "médio"
-    questoes_por_disciplina: int = 5
+    questoes_por_disciplina: int = 50  # <-- AQUI: Acelerador no máximo!
 
     def __post_init__(self):
         self.cargo = self.cargo.strip()
@@ -90,11 +90,12 @@ DISCIPLINA A SER GERADA AGORA:
 ============================================================
 
 Instruções Cruciais:
-1. Desenvolva uma seção '📚 Teoria Essencial' robusta e profunda. Use tabelas para comparações e bullet points para dicas práticas.
-2. Destaque pegadinhas clássicas da banca utilizando blocos de citação (> Pegadinha).
-3. Após a teoria, crie um '🗂️ Resumo Rápido' em formato de tabela ou lista para revisão de véspera.
+1. Desenvolva uma seção '📚 Teoria Essencial' EXAUSTIVA e de ALTÍSSIMA DENSIDADE para os tópicos listados. Aprofunde cada conceito ao máximo, trazendo contexto histórico, exemplos práticos de aplicação, jurisprudência (quando for matéria de Direito) e explicações minuciosas. 
+2. O material deve ser extenso e robusto. Use e abuse de tabelas detalhadas, listas e blocos de texto profundos.
+3. Destaque pegadinhas clássicas da banca utilizando blocos de citação (> Pegadinha).
+4. Após a teoria profunda, crie um '🗂️ Resumo Rápido' em formato de tabela ou lista para revisão de véspera.
 
-Importante: NÃO GERE AS QUESTÕES AGORA. Foque 100% na teoria e vá direto para o conteúdo."""
+Importante: NÃO GERE AS QUESTÕES AGORA. Foque 100% do espaço na teoria e no resumo. Vá direto para o conteúdo da matéria."""
 
 def _construir_prompt_questoes(config: ConfigApostila, disciplina_focada: str) -> str:
     contexto_banca = f"Banca: **{config.banca}**\n" if config.banca else ""
@@ -107,7 +108,7 @@ Disciplina: {disciplina_focada}
 Instruções Cruciais:
 1. Gere exatamente {config.questoes_por_disciplina} questões inéditas ou adaptadas focadas no perfil da banca.
 2. O formato deve ser múltipla escolha (A a E) ou Certo/Errado.
-3. Forneça o GABARITO e o COMENTÁRIO detalhado de cada alternativa para CADA uma das questões.
+3. Forneça o GABARITO e o COMENTÁRIO detalhado EXCLUSIVAMENTE da alternativa CORRETA. É terminantemente proibido comentar as alternativas incorretas.
 4. Inicie sua resposta obrigatoriamente com o título '## 📝 Questões Comentadas'.
 
 Importante: NÃO GERE TEORIA. Vá direto para as questões."""
@@ -221,25 +222,39 @@ def converter_md_para_pdf(caminho_md: str, caminho_pdf: str) -> None:
     @page {
         size: A4;
         margin: 20mm 15mm;
+        background-color: #faf9f6;
         @bottom-right {
             content: counter(page);
-            font-size: 10pt;
-            font-family: Arial, sans-serif;
-            color: #555;
+            font-size: 9pt;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #718096;
         }
     }
     body {
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         line-height: 1.6;
-        color: #333;
+        color: #2d3748;
         font-size: 11pt;
+        margin: 0;
+        padding: 0;
+        orphans: 4;
+        widows: 4;
+    }
+    .page-container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     h1 {
-        font-size: 22pt;
-        color: #1a365d;
+        font-size: 20pt;
+        color: #2b6cb0;
         text-align: center;
         page-break-before: always;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #63b3ed;
     }
     h1:first-of-type {
         page-break-before: avoid;
@@ -247,9 +262,9 @@ def converter_md_para_pdf(caminho_md: str, caminho_pdf: str) -> None:
     h2 {
         font-size: 16pt;
         color: #2c5282;
-        border-bottom: 2px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
         padding-bottom: 5px;
-        margin-top: 30px;
+        margin-top: 25px;
         page-break-after: avoid;
     }
     h3 {
@@ -257,12 +272,14 @@ def converter_md_para_pdf(caminho_md: str, caminho_pdf: str) -> None:
         color: #4a5568;
         margin-top: 20px;
         page-break-after: avoid;
+        border-left: 4px solid #4299e1;
+        padding-left: 10px;
     }
     table {
         width: 100%;
         border-collapse: collapse;
         margin: 20px 0;
-        page-break-inside: avoid;
+        font-size: 10pt;
     }
     th, td {
         border: 1px solid #cbd5e0;
@@ -271,7 +288,7 @@ def converter_md_para_pdf(caminho_md: str, caminho_pdf: str) -> None:
     }
     th {
         background-color: #ebf8ff;
-        color: #2c5282;
+        color: #2b6cb0;
         font-weight: bold;
     }
     tr:nth-child(even) {
@@ -283,12 +300,29 @@ def converter_md_para_pdf(caminho_md: str, caminho_pdf: str) -> None:
         padding: 10px 15px;
         margin: 20px 0;
         font-style: italic;
-        page-break-inside: avoid;
+        font-size: 10.5pt;
     }
     hr {
         border: 0;
         border-top: 1px solid #e2e8f0;
         margin: 30px 0;
+    }
+    code {
+        background-color: #edf2f7;
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9em;
+        color: #e53e3e;
+    }
+    pre {
+        background-color: #2d3748;
+        color: #f7fafc;
+        padding: 12px;
+        border-radius: 4px;
+        overflow-x: auto;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9em;
     }
     """
 
